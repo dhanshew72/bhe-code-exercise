@@ -1,41 +1,54 @@
 # BHE Software Engineer Coding Exercise
 
-## The Sieve of Eratosthenes
 
-Prime numbers have many modern day applications and a long history in
-mathematics. Utilizing your own resources, research the sieve of Eratosthenes,
-an algorithm for generating prime numbers. Based on your research, implement
-an API that allows the caller to retrieve the Nth prime number.
-Some stub code and a test suite have been provided as a convenience. However,
-you are encouraged to deviate from Eratosthenes's algorithm, modify the
-existing functions/methods, or anything else that might showcase your ability;
-provided the following requirements are satisfied.
+## Overview
 
-You must author your work in Go, JavaScript/TypeScript, Python, or C# - all
-other language submissions will be rejected. Stub code has been provided, so
-please choose from one of the provided language stubs that is most
-relevant to your skill set and the position you are applying for.
+This module implements a prime number finder using the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes). Given a 0-based index `n`, it returns the Nth prime number (e.g., index 0 → 2, index 4 → 11).
 
-### Requirements
+The core algorithm is a **segmented sieve** ([pkg/sieve/sieve.go](pkg/sieve/sieve.go)): it sieves a small base segment of size √limit to find base primes, then processes the remaining range in equal-sized chunks, keeping memory usage proportional to √limit rather than the full range. Because finding the Nth prime requires an upper bound, the implementation starts with a small limit and doubles it until enough primes have been found.
 
-- Click on the "Use this template" button to create a new GitHub repository, in which you may implement your solution
-- The library package provides an API for retrieving the Nth prime number using 0-based indexing where the 0th prime number is 2
-- Interviewers must be able to execute a suite of tests
-  - Go: `go test ./...`
-    - Use `go test ./... -fuzz=.` to enable fuzz tests (random, potentially invalid inputs)
-  - C#: `dotnet test Sieve.Tests`
-  - Javascript: `npm run test`
-  - Python: `python -m unittest test_sieve.py`
-- Your solution is committed to your project's `main` branch, no uncommitted changes or untracked files please
-- Submit the link to your public repo for review
+A CLI wrapper ([main.go](main.go)) accepts `n` as a command-line argument and prints the result.
 
-### Considerations
+## Requirements
 
-You may add more tests or restructure existing tests, but you may NOT change or remove
-the existing test outcomes; eg- f(0)=2, f(19)=71, f(99)=541, ..., f(10000000)=179424691
+- [Go 1.22+](https://go.dev/dl/)
 
-During the technical interview, your submission will be discussed, and you will be evaluated in the following areas:
+### Setup
 
-- Technical ability
-- Communication skills
-- Work habits and complementary skills
+```bash
+git clone <repo-url>
+cd bhe-code-exercise
+go mod download
+```
+
+### Running the CLI
+
+Find the Nth prime number (0-based index, where index 0 returns 2):
+
+```bash
+go run main.go <n>
+```
+
+Examples:
+
+```bash
+go run main.go 0    # returns 2 (the 1st prime)
+go run main.go 99   # returns 541
+go run main.go 100  # returns 547
+```
+
+### Running Tests
+
+Using Make:
+
+```bash
+make test           # run all tests with a 30s timeout
+make test-fuzz      # run fuzz tests for 30s (random/edge-case inputs)
+```
+
+Using Go directly:
+
+```bash
+go test ./...                    # run all tests
+go test ./... -fuzz=. -fuzztime=30s  # run fuzz tests
+```

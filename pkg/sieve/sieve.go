@@ -5,7 +5,10 @@ import (
 	"math"
 )
 
-const FIRST_PRIME int64 = 2
+const (
+	FIRST_PRIME int64 = 2
+	LIMIT_MULT  int64 = 2
+)
 
 type Sieve interface {
 	NthPrime(num int64) (int64, error)
@@ -33,10 +36,17 @@ func (solv *solver) NthPrime(num int64) (int64, error) {
 		}
 		// This is an exponential check each iteration as sieve
 		// methodology needs an upper bound
-		// Without knowing the answer, we can only start at 2 then
+		// Without knowing the answer, we can start at 2 then
 		// guess up values for the nth prime
-		limit *= 2
+		limit *= LIMIT_MULT
 	}
+}
+
+// sieve returns all primes up to the limit
+// Note: this is a brute force implementation
+func sieve(limit int64) []int64 {
+	basePrimes := simpleSieve(limit)
+	return basePrimes
 }
 
 // segmentedSieve returns all primes up to limit using the segmented sieve method.
@@ -44,7 +54,7 @@ func (solv *solver) NthPrime(num int64) (int64, error) {
 // range in chunks of the same size, keeping memory usage low.
 func segmentedSieve(limit int64) []int64 {
 	segmentSize := getSegmentSize(limit)
-	basePrimes := buildBasePrimes(segmentSize)
+	basePrimes := simpleSieve(segmentSize)
 	primes := append([]int64{}, basePrimes...)
 
 	for low := segmentSize + 1; low <= limit; low += segmentSize {
@@ -92,15 +102,15 @@ func getSegmentSize(limit int64) int64 {
 }
 
 // buildPasePrimes returns all the primes based up to a size value
-func buildBasePrimes(size int64) []int64 {
-	base := []int64{}
-	isPrime := buildPrimeSieve(size)
-	for num := FIRST_PRIME; num <= size; num++ {
+func simpleSieve(limit int64) []int64 {
+	primes := []int64{}
+	isPrime := buildPrimeSieve(limit)
+	for num := FIRST_PRIME; num <= limit; num++ {
 		if isPrime[num] {
-			base = append(base, num)
+			primes = append(primes, num)
 		}
 	}
-	return base
+	return primes
 }
 
 // buildPrimeSieve returns a boolean slice of size limit+1 where index i is true if i is prime.

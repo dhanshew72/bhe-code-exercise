@@ -1,3 +1,4 @@
+// Command sieve finds the Nth prime number (0-based index).
 package main
 
 import (
@@ -13,7 +14,6 @@ func main() {
 	if len(os.Args) != 2 {
 		log.Fatal("usage: sieve <n>")
 	}
-	// Parses string for base 10 for 64 bit size
 	num, err := strconv.ParseInt(os.Args[1], 10, 64)
 	if err != nil {
 		log.Fatalf("invalid input: %v", err)
