@@ -22,5 +22,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	fmt.Println("Nth Prime Result: ", result)
+	fmt.Println(result)
 }
